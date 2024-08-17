@@ -1,26 +1,31 @@
 class Solution {
 public:
-    int N, M;
-    long long solve(int r, int c, vector<vector<int>> &points, vector<vector<long long>> &dp){
-        if(r == N) return 0;
-        if(r == N - 1)return points[r][c];
-
-        long long &ret = dp[r][c];
-        if(~ret)return ret;
-
-        ret = 0;
-        for(int j = 0; j < M; j++){
-            ret = max(ret, solve(r+1, j, points, dp) + points[r][c] - abs(c - j));
-        }
-        return ret;
-    }
     long long maxPoints(vector<vector<int>>& points) {
-        N = points.size(), M = points[0].size();
-        long long mx = 0;
-        vector<vector<long long>> dp(N, vector<long long>(M, -1));
-        for(int i = 0; i < M; i++){
-            mx = max(mx, solve(0, i, points, dp));
+        int m=points.size();
+        int n=points[0].size();
+        vector<long long>prev(n);
+        for(int i=0;i<n;i++){
+            prev[i]=points[0][i];
         }
-        return mx;
+        for(int i=1;i<m;i++){
+        vector<long long>right(n);
+        vector<long long>left(n);
+        left[0]=prev[0];
+        right[n-1]=prev[n-1];
+        for(int j=1;j<n;j++){
+            left[j]=max(left[j-1]-1,prev[j]);
+        }
+        for(int j=n-2;j>=0;j--){
+            right[j]=max(prev[j],right[j+1]-1);
+        }
+        vector<long long>curr(n);
+        for(int j=0;j<n;j++){
+            curr[j]=points[i][j]+max(left[j],right[j]);
+        }
+        prev=curr;
+        }
+        return *max_element(begin(prev),end(prev));
+
+        
     }
 };
